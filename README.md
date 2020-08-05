@@ -1,1 +1,3 @@
-# Goodo-Game
+# Goodo Game
+
+Game make with pygame

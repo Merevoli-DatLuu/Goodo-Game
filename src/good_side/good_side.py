@@ -24,8 +24,8 @@ class GoodSide:
         """
         click = pygame.mouse.get_pressed()
         if click[2] == 1 and self._flag_born == True:
-            x_pos = random.randint(0, 700 - 32)
-            y_pos = random.randint(0, 500 - 32)
+            x_pos = random.randint(0, 960 - 32)
+            y_pos = random.randint(0, 640 - 32)
             self.good_arr.append(Good(x_pos, y_pos))
             self._flag_born = False
         elif click[2] == 0:
@@ -57,12 +57,14 @@ class GoodSide:
         """
         self.good_die()
         self.good_born()
+
         print(len(self.good_arr))
         random.seed()
         percent = random.random()
         if percent < 0.1:
             self.born()
             print(percent)
+            
         for good in self.good_arr:
             screen.blit(good.get_move_img(), good.get_middle_pos()) 
             good.update()

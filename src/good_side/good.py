@@ -31,31 +31,21 @@ class Good:
 
         self._x_scale = 0
         self._y_scale = 0
+        self.left_mouse_flag = True
+        self.is_moving_by_mouse = False
 
     def move(self):
         """
         Thay đổi pos và move_step khi di chuyển
         :return None
         """
-        """mouse_pos = pygame.mouse.get_pos()
-
-        if mouse_pos[0] - self.pos[0] > 0 and mouse_pos[0] - self.pos[0] <= 60:
-            self.pos[0] += 1
-        else:
-            self.pos[0] += (mouse_pos[0] - self.pos[0])//60
-
-        if mouse_pos[1] - self.pos[1] > 0 and mouse_pos[1] - self.pos[1] <= 60:
-            self.pos[1] += 1
-        else:
-            self.pos[1] += (mouse_pos[1] - self.pos[1])//60
-        """
         if self.move_step == 0:
             self._x_scale = random.random()*2 - 1
             self._y_scale = random.random()*2 - 1
         length_unit = 1
-        if self.pos[0] + self._x_scale*length_unit >= 0 and self.pos[0] + self._x_scale*length_unit <=700 - 32:
+        if self.pos[0] + self._x_scale*length_unit >= 0 and self.pos[0] + self._x_scale*length_unit <= 960 - 32:
             self.pos[0] = self.pos[0] + self._x_scale*length_unit
-        if self.pos[1] + self._y_scale*length_unit >= 0 and self.pos[1] + self._y_scale*length_unit <= 500 - 32:
+        if self.pos[1] + self._y_scale*length_unit >= 0 and self.pos[1] + self._y_scale*length_unit <= 640 - 32:
             self.pos[1] = self.pos[1] + self._y_scale*length_unit
 
         self.move_step = (self.move_step + 1)%30
@@ -83,11 +73,34 @@ class Good:
 
         if  mouse[0] >= self.pos[0] - width//2 and mouse[1] >= self.pos[1] - height//2\
         and mouse[0] <= self.pos[0] + width//2 and mouse[1] <= self.pos[1] + height//2\
-        and click[0] == 1:
+        and click[1] == 1:
             self.is_die = True
             return True
         else:
             return False
+
+    def move_by_mouse(self):
+        """
+        Di chuyển bởi mouse
+        :reture None
+        """
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
+
+        if  mouse[0] >= self.pos[0] and mouse[1] >= self.pos[1]\
+        and mouse[0] <= self.pos[0] + 32 and mouse[1] <= self.pos[1] + 32\
+        and click[0] == 1 and self.left_mouse_flag == True:
+            self.left_mouse_flag = False
+            self.is_moving_by_mouse = True
+
+        if click[0] == 0:
+            self.left_mouse_flag = True
+            self.is_moving_by_mouse = False
+
+        if self.is_moving_by_mouse == True:
+            self.pos[0] = mouse[0] +- 32//2
+            self.pos[1] = mouse[1] - 32//2
+
 
     def update(self):
         """
@@ -98,6 +111,7 @@ class Good:
             self.born()
         else:
             self.move()
+            self.move_by_mouse()
             self.die()
 
     def get_middle_pos(self):

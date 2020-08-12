@@ -21,7 +21,6 @@ class Good:
         self.die_img_arr = list(map(lambda id : self.die_img_src + str(id) + '.png', range(0, 8)))
         self.die_arr = list(map(pygame.image.load, self.die_img_arr))
         
-        self.action_arr = self.born_arr
         self.pos = [x, y]
         self.move_step = 0
         self.born_step = 0
@@ -33,6 +32,7 @@ class Good:
         self._y_scale = 0
         self.left_mouse_flag = True
         self.is_moving_by_mouse = False
+        self.can_moving_by_mouse = True
 
     def move(self):
         """
@@ -59,7 +59,6 @@ class Good:
 
         if self.born_step >= 13:
             self.is_born = False
-            self.action_arr = self.move_arr
 
     def die(self):
         """
@@ -98,7 +97,7 @@ class Good:
             self.is_moving_by_mouse = False
 
         if self.is_moving_by_mouse == True:
-            self.pos[0] = mouse[0] +- 32//2
+            self.pos[0] = mouse[0] - 32//2
             self.pos[1] = mouse[1] - 32//2
 
 
@@ -111,7 +110,8 @@ class Good:
             self.born()
         else:
             self.move()
-            self.move_by_mouse()
+            if self.can_moving_by_mouse == True:
+                self.move_by_mouse()
             self.die()
 
     def get_middle_pos(self):

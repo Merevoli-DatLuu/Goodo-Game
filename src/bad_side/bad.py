@@ -1,3 +1,4 @@
+from math import trunc
 import pygame
 import math
 import random
@@ -17,7 +18,8 @@ class Bad:
         self.die_img_arr = list(map(lambda id : self.die_img_src + str(id) + '.png', range(0, 8)))
         self.die_arr = list(map(pygame.image.load, self.die_img_arr))
         
-        self.speed = 2 # 20 pixels / second
+        self.health = 5
+        self.speed = 1.7 
         self.pos = [x, y]
         self.move_step = 0
         self.die_step = 0
@@ -35,7 +37,7 @@ class Bad:
         """        
         sub_x = self.pos[0] - pos[0]
         sub_y = self.pos[1] - pos[1]
-        sub_scale = self.speed/math.sqrt(sub_x**2 + sub_y**2)
+        sub_scale = self.speed/(math.sqrt(sub_x**2 + sub_y**2) + 0.001)
 
         self.pos[0] -= sub_x*sub_scale
         self.pos[1] -= sub_y*sub_scale
@@ -48,10 +50,11 @@ class Bad:
         min_distance = 0x3f3f3f3f
         min_pos = [100, 100]
         for good in good_arr:
-            distance = (good.pos[0] - self.pos[0])**2 + (good.pos[1] - self.pos[1])**2
-            if distance < min_distance:
-                min_distance = distance
-                min_pos = good.pos
+            if good.is_moving_by_mouse != True or len(good_arr) <= 1: # không chạy theo con đang được di chuyển bởi chuột
+                distance = (good.pos[0] - self.pos[0])**2 + (good.pos[1] - self.pos[1])**2
+                if distance < min_distance:
+                    min_distance = distance
+                    min_pos = good.pos
 
         self.move_to(min_pos)
 
@@ -76,13 +79,26 @@ class Bad:
             return False
 
     def kill(self, good_arr):
+        """
+        Kill good khi va chạm 
+        - 1 health cho mỗi good
+        :return None
+        """
         for good in good_arr:
-            if (good.pos[0]<= self.pos[0] <= good.pos[0] + 32\
-             or good.pos[0]<= self.pos[0] + 32 <= good.pos[0] + 32)\
-            and (good.pos[1]<= self.pos[1] <= good.pos[1] + 32\
-             or good.pos[1]<= self.pos[1] + 32 <= good.pos[1] + 32):
-                #good_arr.remove(good)
-                good.is_die = True
+            if good.is_moving_by_mouse != True or len(good_arr) <= 1:
+                if (good.pos[0]<= self.pos[0] <= good.pos[0] + 32\
+                or good.pos[0]<= self.pos[0] + 32 <= good.pos[0] + 32)\
+                and (good.pos[1]<= self.pos[1] <= good.pos[1] + 32\
+                or good.pos[1]<= self.pos[1] + 32 <= good.pos[1] + 32)\
+                and good.is_die == False:
+                    #good_arr.remove(good)
+                    good.is_die = True
+                    
+                    if self.health > 0:
+                        self.health -= 1
+
+                    if self.health == 0:
+                        self.is_die = True # health == 0 -> die
 
     def update(self, good_arr):
         """

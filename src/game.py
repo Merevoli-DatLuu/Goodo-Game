@@ -6,7 +6,7 @@ from good_side.good import Good
 from bad_side.bad_side import BadSide
 from bad_side.bad import Bad
 
-import pytmx
+import map
 
 pygame.init()
 
@@ -31,11 +31,8 @@ bads.bad_arr.append(Bad(500, 400))
 
 bads.bad_arr.append(Bad(100, 280))
 
-gameMap = pytmx.load_pygame('./map/map_2.tmx')
-width_gameMap = gameMap.tilewidth*gameMap.width
-height_gameMap = gameMap.tileheight*gameMap.height
+map_level_test = map.Map('./map/Map_2.tmx')
 
-empty_surface = pygame.Surface((width_gameMap, height_gameMap))
 running = True
 
 while running:
@@ -47,12 +44,9 @@ while running:
     
     #screen.fill((190, 237, 194))
     
-    for i in range(gameMap.width):
-        for j in range(gameMap.height):
-            image = gameMap.get_tile_image(i, j, 0)
-            screen.blit(image, (gameMap.tilewidth*i, gameMap.tileheight*j))
+    map_level_test.draw(screen)
 
-    goods.update(screen)
+    goods.update(screen, bads.bad_arr)
     bads.update(screen, goods.good_arr)
     fps = font.render(str(int(clock.get_fps())), True, pygame.Color('gray'))
     screen.blit(fps, (50, 50))
